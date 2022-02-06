@@ -1,0 +1,13 @@
+.label1 {
+    color: #fff;
+}
+
+.ant-menu-title-content > a.active {
+    color: #000 !important;
+  }
+  
+  .ant-menu-title-content > a:not(.active) {
+    color: #fff !important;
+  }
+
+  
