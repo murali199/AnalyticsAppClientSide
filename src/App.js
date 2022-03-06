@@ -1,7 +1,7 @@
 import { Switch, Route, Redirect } from "react-router-dom";
 import Home from "./pages/Home";
 import Upload from "./pages/Upload";
-import Billing from "./pages/Billing";
+import Analytics from "./pages/Analytics";
 import Profile from "./pages/Profile";
 import Users from "./pages/Users";
 import SignUp from "./pages/SignUp";
@@ -20,7 +20,7 @@ function App() {
         <Main>
           <Route exact path="/dashboard" component={Home} />
           <Route exact path="/upload" component={Upload} />
-          <Route exact path="/billing" component={Billing} />
+          <Route exact path="/analytics" component={Analytics} />
           <Route exact path="/profile" component={Profile} />
           <Route exact path="/users" component={Users} />
           <Redirect from="*" to="/dashboard" />

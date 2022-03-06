@@ -60,7 +60,7 @@ function Main({ children }) {
             </AntHeader>
           </Affix>
         <Content className="content-ant">{children}</Content>
-        <Footer />
+        
       </Layout>
     </Layout>
   );
