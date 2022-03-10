@@ -8,12 +8,13 @@ import {
   Table,
   Avatar,
   Typography,
-  Space
+  Spin
 } from "antd";
 import React, { Component } from "react";
 import UploadService from "../services/upload-files.service";
 import { ToTopOutlined, UploadOutlined, CloudDownloadOutlined, EditOutlined, DeleteOutlined, FileOutlined } from "@ant-design/icons";
 import base64js from "base64-js"
+import { ACCESS_TOKEN, API_BASE_URL } from '../assets/constants';
 
 const { Title } = Typography;
 
@@ -61,19 +62,20 @@ const data1 = [];
 
 const formProps = {
   name: "file",
-  action: "http://localhost:8080/api/files/upload",
+  action: API_BASE_URL+"/files/upload",
   listType: "picture",
   className: "upload-list-inline",
   headers: {
-    authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwiaWF0IjoxNjQ1NjI1MDA4LCJleHAiOjE2NDYyMjk4MDh9.9j_yu7vX1SCdoqTDBvp_227pLEIperQJaxU5OnAAeaMScB_-z6vOJ1q4iI8_NmS80eKoaZWGnNgqIsLp21PPtA`,
+    authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
   },
-  onChange(info) {
+  
+  onChange(info, updateData) {
     if (info.file.status !== "uploading") {
       console.log(info.file, info.fileList);
     }
     if (info.file.status === "done") {
       message.success(`${info.file.name} file uploaded successfully`);
-      this.componentDidMount();
+      window.location.reload();
     } else if (info.file.status === "error") {
       message.error(`${info.file.name} file upload failed.`);
     }
@@ -83,15 +85,17 @@ const formProps = {
 const props = {
   name: 'file',  
   headers: {
-    authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwiaWF0IjoxNjQ1NjI1MDA4LCJleHAiOjE2NDYyMjk4MDh9.9j_yu7vX1SCdoqTDBvp_227pLEIperQJaxU5OnAAeaMScB_-z6vOJ1q4iI8_NmS80eKoaZWGnNgqIsLp21PPtA`,
+    authorization: 'Bearer ' + localStorage.getItem(ACCESS_TOKEN),
+    
   },
-  onChange(info) {
+  
+  onChange(info, updateData) {
     if (info.file.status !== 'uploading') {
       console.log(info.file, info.fileList);
     }
     if (info.file.status === 'done') {
       message.success(`${info.file.name} file uploaded successfully`);
-      this.componentDidMount();
+      window.location.reload();
     } else if (info.file.status === 'error') {
       message.error(`${info.file.name} file upload failed.`);
     }
@@ -105,6 +109,7 @@ export default class UploadFiles extends Component {
     this.state = {
       selectedFiles: undefined,
       currentFile: undefined,
+      loading: true, 
       progress: 0,
       message: "",
       fileInfos: [],
@@ -130,7 +135,7 @@ export default class UploadFiles extends Component {
    await UploadService.getFiles().then((response) => {  
     data1.length = 0;
     response.data.map((file, index) => {
-      var updateLink = 'http://localhost:8080/api/files/update/'+file.id
+      var updateLink = API_BASE_URL+'/files/update/'+file.id
       data1.push({          
         key: file.id,
         name: (
@@ -193,6 +198,7 @@ export default class UploadFiles extends Component {
         fileInfos: response.data,
         fileList: response.data,
         myTable: data1,
+        loading: false
       });
     })
   }   
@@ -216,13 +222,13 @@ export default class UploadFiles extends Component {
 
   deleteFile = (id) => {
     UploadService.deleteFile(id).then((response) => {
-      console.log(response)
-      if (response === 'Success') {
+      console.log(response.data)
+      if (response.data === 'Success') {
         message.success(`File deleted successfully`);
       } else {
         message.error(`File delete failed.`);
       }
-      this.componentDidMount();
+      window.location.reload();
     });
   }
 
@@ -267,6 +273,7 @@ export default class UploadFiles extends Component {
                 </div>
               </Col>
               <Col xs="18" xl={18}>
+              <Spin tip="Loading..." spinning={this.state.loading}>
               <div className="table-responsive">
                 <Table
                   columns={columns}
@@ -276,6 +283,7 @@ export default class UploadFiles extends Component {
                   style= {{ whiteSpace : 'unset', marginTop: '10px' }}
                 />                
               </div>
+              </Spin>
               </Col>
             </Row>
           </Card>
